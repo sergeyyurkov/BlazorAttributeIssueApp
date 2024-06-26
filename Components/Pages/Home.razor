@@ -1,0 +1,44 @@
+﻿@page "/"
+@using System.Linq.Expressions
+
+<PageTitle>Home</PageTitle>
+
+@Body
+
+<button @onclick="OnAddAttributeClick">Add attribute</button>
+<button @onclick="OnRemoveAttributeClick">Remove attribute</button>
+
+<p>_addAttribute: @_addAttribute</p>
+
+@code {
+	RenderFragment? Body;
+	string _inputTextValue = "Test";
+
+	bool _addAttribute = true;
+
+	protected override void OnInitialized()
+	{
+		Body = b =>
+		{
+			b.OpenComponent<InputText>(1);
+			b.AddComponentParameter(2, nameof(InputText.Value), _inputTextValue);
+			b.AddComponentParameter(3, nameof(InputText.ValueChanged), EventCallback.Factory.Create<string>(this, newValue => _inputTextValue = newValue));
+			b.AddComponentParameter(4, nameof(InputText.ValueExpression), (Expression<Func<string>>)(() => _inputTextValue));
+			if (_addAttribute)
+			{
+				b.AddAttribute(10, "class", "example-class");
+			}
+			b.CloseComponent();
+		};
+	}
+
+	void OnAddAttributeClick()
+	{
+		_addAttribute = true;
+	}
+
+	void OnRemoveAttributeClick()
+	{
+		_addAttribute = false;
+	}
+}
